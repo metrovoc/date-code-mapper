@@ -1,0 +1,85 @@
+/* 通用样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 设置整体页面背景 */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* 标题样式 */
+h1 {
+  text-align: center;
+  color: #4caf50;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+/* 显示映射结果区域样式 */
+#mappedDates {
+  font-size: 1.2rem;
+  color: #555;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+/* 映射按钮样式 */
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+/* 输入区域样式 */
+input[type="text"] {
+  padding: 10px;
+  font-size: 1rem;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: #4caf50;
+}
+
+/* 响应式布局：让内容适应小屏幕 */
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  #mappedDates {
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  input[type="text"] {
+    max-width: 100%;
+  }
+}
