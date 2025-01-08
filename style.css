@@ -45,27 +45,41 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
   background-color: #45a049;
+  transform: scale(1.05); /* 鼠标悬停时放大 */
 }
 
 /* 输入区域样式 */
 input[type="text"] {
+  display: block;
+  margin: 10px auto;
   padding: 10px;
   font-size: 1rem;
-  margin: 10px 0;
   width: 100%;
   max-width: 300px;
   border-radius: 5px;
   border: 1px solid #ddd;
   outline: none;
+  text-align: center; /* 居中显示文本 */
 }
 
 input[type="text"]:focus {
   border-color: #4caf50;
+}
+
+/* 容器样式 */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* 响应式布局：让内容适应小屏幕 */

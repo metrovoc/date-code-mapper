@@ -7,16 +7,24 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Date Mapping</h1>
-    <p>Enter a date and click the button to map it to a three-digit number:</p>
-    <input type="text" id="inputDate" placeholder="Enter date (MMDD format)" />
-    <button onclick="mapDate()">Map Date</button>
+    <div class="container">
+      <h1>Date Mapping</h1>
+      <p>
+        Enter a date and click the button to map it to a three-digit number:
+      </p>
+      <input
+        type="text"
+        id="inputDate"
+        placeholder="Enter date (MMDD format)"
+      />
+      <button onclick="mapDate()">Map Date</button>
 
-    <p>Enter a three-digit number to inverse map it to a date:</p>
-    <input type="text" id="inputMapped" placeholder="Enter mapped number" />
-    <button onclick="inverseMapDate()">Inverse Map Date</button>
+      <p>Enter a three-digit number to inverse map it to a date:</p>
+      <input type="text" id="inputMapped" placeholder="Enter mapped number" />
+      <button onclick="inverseMapDate()">Inverse Map Date</button>
 
-    <div id="mappedDates"></div>
+      <div id="mappedDates"></div>
+    </div>
 
     <script src="script.js"></script>
     <script>
