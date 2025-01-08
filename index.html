@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Date Mapping</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.cdnfonts.com/css/cascadia-code"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="container">
@@ -23,17 +27,15 @@
         id="inputDate"
         placeholder="Enter date (MMDD format)"
         autocomplete="off"
-        value="MMDD"
       />
       <button class="big-button" onclick="mapDate()">Map Date</button>
 
-      <p>Enter a three-digit number to inverse map it to a date:</p>
+      <p>Enter a mapped number to inverse map it to a date:</p>
       <input
         type="text"
         id="inputMapped"
         placeholder="Enter mapped number"
         autocomplete="off"
-        value="MMDD"
       />
       <button class="big-button" onclick="inverseMapDate()">
         Inverse Map Date
