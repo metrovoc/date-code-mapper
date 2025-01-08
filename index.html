@@ -12,6 +12,10 @@
     <input type="text" id="inputDate" placeholder="Enter date (MMDD format)" />
     <button onclick="mapDate()">Map Date</button>
 
+    <p>Enter a three-digit number to inverse map it to a date:</p>
+    <input type="text" id="inputMapped" placeholder="Enter mapped number" />
+    <button onclick="inverseMapDate()">Inverse Map Date</button>
+
     <div id="mappedDates"></div>
 
     <script src="script.js"></script>
@@ -26,6 +30,19 @@
         const reversedDates = inverseMapping(mapped);
         document.getElementById("mappedDates").innerHTML = `
                 <p>Mapped result: ${mapped.join(", ")}</p>
+                <p>Reversed mapping: ${reversedDates.join(", ")}</p>
+            `;
+      }
+
+      function inverseMapDate() {
+        const inputMapped = document.getElementById("inputMapped").value;
+        if (!inputMapped) {
+          alert("Please enter a valid mapped number!");
+          return;
+        }
+        const mapped = [parseInt(inputMapped)];
+        const reversedDates = inverseMapping(mapped);
+        document.getElementById("mappedDates").innerHTML = `
                 <p>Reversed mapping: ${reversedDates.join(", ")}</p>
             `;
       }
