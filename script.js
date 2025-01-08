@@ -91,12 +91,11 @@ function mapDate() {
     return;
   }
   const mapped = dateMapping([parseInt(inputDate)]);
-  const reversedDates = inverseMapping(mapped);
   document.getElementById("mappedDates").innerHTML = `
           <p>Mapped result: ${mapped.join(", ")}</p>
-          <p>Reversed mapping: ${reversedDates.join(", ")}</p>
       `;
-  addToHistory(inputDate, mapped.join(", "), reversedDates.join(", "));
+  document.getElementById("inputMapped").value = ""; // 清空另一个输入框
+  addToHistory("map", inputDate, mapped.join(", "));
 }
 
 function inverseMapDate() {
@@ -105,12 +104,12 @@ function inverseMapDate() {
     alert("Please enter a valid mapped number!");
     return;
   }
-  const mapped = [parseInt(inputMapped)];
-  const reversedDates = inverseMapping(mapped);
+  const reversedDates = inverseMapping([parseInt(inputMapped)]);
   document.getElementById("mappedDates").innerHTML = `
           <p>Reversed mapping: ${reversedDates.join(", ")}</p>
       `;
-  addToHistory(inputMapped, reversedDates.join(", "), mapped.join(", "));
+  document.getElementById("inputDate").value = ""; // 清空另一个输入框
+  addToHistory("inverse", inputMapped, reversedDates.join(", "));
 }
 
 function toggleHistory() {
@@ -124,12 +123,12 @@ function toggleHistory() {
   }
 }
 
-function addToHistory(input, mapped, reversed) {
+function addToHistory(type, input, result) {
   const historyDiv = document.getElementById("history");
   const entry = document.createElement("div");
   entry.className = "history-entry";
   entry.innerHTML = `
-    <span>${input} ➔ ${mapped} ➔ ${reversed}</span>
+    <span>${type}: ${input} ➔ ${result}</span>
     <button class="svg-btn" onclick="deleteHistory(event, this)">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3 6H5H21" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -143,9 +142,15 @@ function addToHistory(input, mapped, reversed) {
       event.target.tagName !== "svg" &&
       event.target.tagName !== "path"
     ) {
-      document.getElementById("inputDate").value = input;
-      document.getElementById("inputMapped").value = mapped;
-      mapDate();
+      if (type === "map") {
+        document.getElementById("inputDate").value = input;
+        document.getElementById("inputMapped").value = "";
+        mapDate();
+      } else {
+        document.getElementById("inputMapped").value = input;
+        document.getElementById("inputDate").value = "";
+        inverseMapDate();
+      }
     }
   };
   historyDiv.appendChild(entry);
@@ -173,7 +178,8 @@ function saveHistory() {
 function loadHistory() {
   const history = JSON.parse(localStorage.getItem("history")) || [];
   for (let record of history) {
-    const [input, mapped, reversed] = record.split(" ➔ ");
-    addToHistory(input, mapped, reversed);
+    const [typeInput, result] = record.split(" ➔ ");
+    const [type, input] = typeInput.split(": ");
+    addToHistory(type, input, result);
   }
 }
