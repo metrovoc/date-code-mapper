@@ -8,6 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("b").setAttribute("data-value", b);
   document.getElementById("m").setAttribute("data-value", m);
   document.getElementById("offset").setAttribute("data-value", offset);
+
+  // 设置默认值为今日日期
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const formattedDate = `${month}${day}`;
+  document.getElementById("inputDate").value = formattedDate;
+  document.getElementById("inputMapped").value = dateMapping([
+    parseInt(formattedDate),
+  ])[0];
+
   loadHistory();
 });
 
