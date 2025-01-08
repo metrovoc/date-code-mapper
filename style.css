@@ -186,6 +186,28 @@ input[type="text"]:focus {
   transform: scale(1.1); /* 鼠标悬停时轻轻浮起 */
 }
 
+.tooltip {
+  display: none;
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: normal;
+  font-size: 0.9rem;
+  z-index: 10;
+  width: auto;
+  max-width: 600px;
+  overflow: hidden;
+}
+
+#infoButton:hover + .tooltip {
+  display: block;
+}
+
 /* 公式方块样式 */
 .formula {
   background-color: #e0f7fa;
@@ -208,7 +230,7 @@ input[type="text"]:focus {
   content: attr(data-value);
   position: absolute;
   bottom: 100%;
-  left: 50%;
+  left: 0%;
   transform: translateX(-50%);
   background-color: #333;
   color: #fff;
@@ -225,21 +247,4 @@ input[type="text"]:focus {
   align-items: center;
   margin-top: 20px;
   gap: 20px; /* 设置按钮之间的间距 */
-}
-
-.tooltip {
-  display: none;
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 5px;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  z-index: 10;
-  width: 200px;
-  text-align: center;
 }
