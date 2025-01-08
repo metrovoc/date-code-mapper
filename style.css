@@ -97,3 +97,59 @@ input[type="text"]:focus {
     max-width: 100%;
   }
 }
+
+/* 历史记录样式 */
+#history {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.history-entry:last-child {
+  border-bottom: none;
+}
+
+.history-entry:hover .delete-btn {
+  display: inline;
+}
+
+.delete-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+#toggleHistory {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+#toggleHistory:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}

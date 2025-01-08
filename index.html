@@ -24,10 +24,16 @@
       <button onclick="inverseMapDate()">Inverse Map Date</button>
 
       <div id="mappedDates"></div>
+      <button id="toggleHistory" onclick="toggleHistory()">
+        🕒 Show History
+      </button>
+      <div id="history" style="display: none"></div>
     </div>
 
     <script src="script.js"></script>
     <script>
+      document.addEventListener("DOMContentLoaded", loadHistory);
+
       function mapDate() {
         const inputDate = document.getElementById("inputDate").value;
         if (!inputDate) {
@@ -40,6 +46,7 @@
                 <p>Mapped result: ${mapped.join(", ")}</p>
                 <p>Reversed mapping: ${reversedDates.join(", ")}</p>
             `;
+        addToHistory(inputDate, mapped.join(", "), reversedDates.join(", "));
       }
 
       function inverseMapDate() {
@@ -53,6 +60,74 @@
         document.getElementById("mappedDates").innerHTML = `
                 <p>Reversed mapping: ${reversedDates.join(", ")}</p>
             `;
+        addToHistory(inputMapped, reversedDates.join(", "), mapped.join(", "));
+      }
+
+      function toggleHistory() {
+        const historyDiv = document.getElementById("history");
+        if (historyDiv.style.display === "none") {
+          historyDiv.style.display = "block";
+          document.getElementById("toggleHistory").innerText =
+            "🕒 Hide History";
+        } else {
+          historyDiv.style.display = "none";
+          document.getElementById("toggleHistory").innerText =
+            "🕒 Show History";
+        }
+      }
+
+      function addToHistory(input, mapped, reversed) {
+        const historyDiv = document.getElementById("history");
+        const entry = document.createElement("div");
+        entry.className = "history-entry";
+        entry.innerHTML = `
+          <span>${input} ➔ ${mapped} ➔ ${reversed}</span>
+          <button class="delete-btn" onclick="deleteHistory(event, this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6H5H21" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        `;
+        entry.onclick = function (event) {
+          if (
+            event.target.className !== "delete-btn" &&
+            event.target.tagName !== "svg" &&
+            event.target.tagName !== "path"
+          ) {
+            document.getElementById("inputDate").value = input;
+            document.getElementById("inputMapped").value = mapped;
+            mapDate();
+          }
+        };
+        historyDiv.appendChild(entry);
+        saveHistory();
+      }
+
+      function deleteHistory(event, button) {
+        event.stopPropagation();
+        const entry = button.parentElement;
+        entry.remove();
+        saveHistory();
+      }
+
+      function saveHistory() {
+        const historyDiv = document.getElementById("history");
+        const entries = historyDiv.getElementsByClassName("history-entry");
+        const history = [];
+        for (let entry of entries) {
+          const text = entry.getElementsByTagName("span")[0].innerText;
+          history.push(text);
+        }
+        localStorage.setItem("history", JSON.stringify(history));
+      }
+
+      function loadHistory() {
+        const history = JSON.parse(localStorage.getItem("history")) || [];
+        for (let record of history) {
+          const [input, mapped, reversed] = record.split(" ➔ ");
+          addToHistory(input, mapped, reversed);
+        }
       }
     </script>
   </body>
