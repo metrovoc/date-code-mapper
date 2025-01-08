@@ -27,6 +27,9 @@ function dateToSequence(date) {
     let dateStr = String(date).padStart(4, "0"); // 确保日期是 4 位数
     let month = parseInt(dateStr.slice(0, 2));
     let day = parseInt(dateStr.slice(2, 4));
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      throw new Error("Invalid date");
+    }
     let baseDate = new Date(2020, 0, 1); // 使用闰年
     let targetDate = new Date(2020, month - 1, day);
     let sequence =
@@ -34,17 +37,28 @@ function dateToSequence(date) {
     return sequence;
   } catch (e) {
     console.error("非法日期: " + date);
+    alert("Invalid date: " + date);
+    return undefined;
   }
 }
 
 function sequenceToDate(sequence) {
-  let baseDate = new Date(2020, 0, 1);
-  let targetDate = new Date(
-    baseDate.getTime() + (sequence - 1) * 24 * 60 * 60 * 1000
-  );
-  let month = targetDate.getMonth() + 1;
-  let day = targetDate.getDate();
-  return String(month).padStart(2, "0") + String(day).padStart(2, "0");
+  try {
+    let baseDate = new Date(2020, 0, 1);
+    let targetDate = new Date(
+      baseDate.getTime() + (sequence - 1) * 24 * 60 * 60 * 1000
+    );
+    let month = targetDate.getMonth() + 1;
+    let day = targetDate.getDate();
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      throw new Error("Invalid sequence");
+    }
+    return String(month).padStart(2, "0") + String(day).padStart(2, "0");
+  } catch (e) {
+    console.error("非法序列: " + sequence);
+    alert("Invalid sequence: " + sequence);
+    return undefined;
+  }
 }
 
 function extendedGCD(a, b) {
@@ -87,6 +101,7 @@ function inverseMapping(mappedList) {
     let temp = y - offset - b;
     let sequence = (aInv * ((temp % m) + m)) % m; // 处理负数取模
     let date = sequenceToDate(sequence);
+    if (date === undefined) continue; // 跳过非法序列
     results.push(date);
   }
   return results;
@@ -105,6 +120,10 @@ function mapDate() {
     return;
   }
   const mapped = dateMapping([parseInt(inputDate)]);
+  if (mapped.length === 0) {
+    alert("Mapping failed. Please enter a valid date.");
+    return;
+  }
   const mappedDatesDiv = document.getElementById("mappedDates");
   mappedDatesDiv.classList.remove("placeholder");
   mappedDatesDiv.innerHTML = `
@@ -121,6 +140,10 @@ function inverseMapDate() {
     return;
   }
   const reversedDates = inverseMapping([parseInt(inputMapped)]);
+  if (reversedDates.length === 0) {
+    alert("Inverse mapping failed. Please enter a valid mapped number.");
+    return;
+  }
   const mappedDatesDiv = document.getElementById("mappedDates");
   mappedDatesDiv.classList.remove("placeholder");
   mappedDatesDiv.innerHTML = `
