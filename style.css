@@ -34,8 +34,8 @@ h1 {
   max-width: 600px;
 }
 
-/* 映射按钮样式 */
-button {
+/* 大按钮样式 */
+.big-button {
   display: block;
   margin: 20px auto;
   padding: 12px 20px;
@@ -48,7 +48,7 @@ button {
   transition: background-color 0.3s, transform 0.3s;
 }
 
-button:hover {
+.big-button:hover {
   background-color: #45a049;
   transform: scale(1.05); /* 鼠标悬停时放大 */
 }
@@ -119,19 +119,20 @@ input[type="text"]:focus {
   border-bottom: none;
 }
 
-.history-entry:hover .delete-btn {
+.history-entry:hover .svg-btn {
   display: inline;
 }
 
-.delete-btn {
+.svg-btn {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
   margin-left: 10px;
+  padding: 0; /* 去除内边距 */
 }
 
-.delete-btn svg {
+.svg-btn svg {
   width: 16px;
   height: 16px;
 }
@@ -139,17 +140,17 @@ input[type="text"]:focus {
 #toggleHistory {
   display: block;
   margin: 20px auto;
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: white;
-  background-color: #4caf50;
+  background: none;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: transform 0.3s;
+}
+
+#toggleHistory svg {
+  width: 24px;
+  height: 24px;
 }
 
 #toggleHistory:hover {
-  background-color: #45a049;
-  transform: scale(1.05);
+  transform: scale(1.1); /* 鼠标悬停时轻轻浮起 */
 }
