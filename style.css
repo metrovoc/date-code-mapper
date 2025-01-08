@@ -14,6 +14,19 @@ body {
   padding: 20px;
 }
 
+/* 禁止非必要元素的选中/复制 */
+body,
+.big-button,
+.svg-btn,
+.tooltip,
+.formula,
+.highlight {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 /* 标题样式 */
 h1 {
   text-align: center;
