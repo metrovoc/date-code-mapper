@@ -94,7 +94,9 @@ function mapDate() {
     return;
   }
   const mapped = dateMapping([parseInt(inputDate)]);
-  document.getElementById("mappedDates").innerHTML = `
+  const mappedDatesDiv = document.getElementById("mappedDates");
+  mappedDatesDiv.classList.remove("placeholder");
+  mappedDatesDiv.innerHTML = `
           <p>Mapped result: ${mapped.join(", ")}</p>
       `;
   document.getElementById("inputMapped").value = ""; // 清空另一个输入框
@@ -108,7 +110,9 @@ function inverseMapDate() {
     return;
   }
   const reversedDates = inverseMapping([parseInt(inputMapped)]);
-  document.getElementById("mappedDates").innerHTML = `
+  const mappedDatesDiv = document.getElementById("mappedDates");
+  mappedDatesDiv.classList.remove("placeholder");
+  mappedDatesDiv.innerHTML = `
           <p>Reversed mapping: ${reversedDates.join(", ")}</p>
       `;
   document.getElementById("inputDate").value = ""; // 清空另一个输入框
