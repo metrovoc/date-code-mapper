@@ -23,13 +23,22 @@ function sequenceToDate(sequence) {
   return String(month).padStart(2, "0") + String(day).padStart(2, "0");
 }
 
-function modularInverse(a, m) {
-  for (let x = 1; x < m; x++) {
-    if ((a * x) % m === 1) {
-      return x;
-    }
+function extendedGCD(a, b) {
+  if (b === 0) {
+    return [a, 1, 0];
+  } else {
+    let [g, x, y] = extendedGCD(b, a % b);
+    return [g, y, x - Math.floor(a / b) * y];
   }
-  return null;
+}
+
+function modularInverse(a, m) {
+  let [g, x, y] = extendedGCD(a, m);
+  if (g !== 1) {
+    return null; // 逆元不存在
+  } else {
+    return ((x % m) + m) % m; // 确保结果为正数
+  }
 }
 
 function dateMapping(dates) {
@@ -40,6 +49,7 @@ function dateMapping(dates) {
   let results = [];
   for (let date of dates) {
     let sequence = dateToSequence(date); // 转换为序列号
+    if (sequence === undefined) continue; // 跳过非法日期
     let mapped = ((a * sequence + b) % m) + offset;
     results.push(mapped);
   }
@@ -52,9 +62,14 @@ function inverseMapping(mappedList) {
   const b = 123;
   const offset = 100;
   let aInv = modularInverse(a, m);
+  if (aInv === null) {
+    console.error("逆元不存在");
+    return [];
+  }
   let results = [];
   for (let y of mappedList) {
-    let sequence = (aInv * (y - offset - b)) % m;
+    let temp = y - offset - b;
+    let sequence = (aInv * ((temp % m) + m)) % m; // 处理负数取模
     let date = sequenceToDate(sequence);
     results.push(date);
   }
