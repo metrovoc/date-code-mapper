@@ -1,3 +1,16 @@
+const a = 37;
+const b = 123;
+const m = 366;
+const offset = 100;
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("a").setAttribute("data-value", a);
+  document.getElementById("b").setAttribute("data-value", b);
+  document.getElementById("m").setAttribute("data-value", m);
+  document.getElementById("offset").setAttribute("data-value", offset);
+  loadHistory();
+});
+
 function dateToSequence(date) {
   try {
     let dateStr = String(date).padStart(4, "0"); // 确保日期是 4 位数
@@ -42,10 +55,6 @@ function modularInverse(a, m) {
 }
 
 function dateMapping(dates) {
-  const m = 366;
-  const a = 37;
-  const b = 123;
-  const offset = 100;
   let results = [];
   for (let date of dates) {
     let sequence = dateToSequence(date); // 转换为序列号
@@ -57,10 +66,6 @@ function dateMapping(dates) {
 }
 
 function inverseMapping(mappedList) {
-  const m = 366;
-  const a = 37;
-  const b = 123;
-  const offset = 100;
   let aInv = modularInverse(a, m);
   if (aInv === null) {
     console.error("逆元不存在");
@@ -81,8 +86,6 @@ let dates = [101, 1230]; // 输入日期集合（格式 MMDD）
 let mapped = dateMapping(dates); // 映射到三位数集合
 let reversedDates = inverseMapping(mapped); // 映射回日期
 console.log(mapped, reversedDates);
-
-document.addEventListener("DOMContentLoaded", loadHistory);
 
 function mapDate() {
   const inputDate = document.getElementById("inputDate").value;
