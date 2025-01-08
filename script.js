@@ -123,10 +123,8 @@ function toggleHistory() {
   const historyDiv = document.getElementById("history");
   if (historyDiv.style.display === "none") {
     historyDiv.style.display = "block";
-    document.getElementById("toggleHistory").innerText = "🕒 Hide History";
   } else {
     historyDiv.style.display = "none";
-    document.getElementById("toggleHistory").innerText = "🕒 Show History";
   }
 }
 
