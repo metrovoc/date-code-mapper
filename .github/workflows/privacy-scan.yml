@@ -1,0 +1,41 @@
+name: Privacy scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject public identity leaks
+        shell: bash
+        run: |
+          legacy_user='to''vkaic'
+          legacy_account='Rc''pentuy'
+          legacy_mail="${legacy_user}@gmail.com"
+          university_mail='jiatong-xie@g.ecc.u-''tokyo.ac.jp'
+          legacy_home="/Users/${legacy_user}"
+
+          if git grep -nIE "${legacy_user}|${legacy_account}|${legacy_mail}|${university_mail}|${legacy_home}" -- . \
+            ':(exclude).github/workflows/privacy-scan.yml'; then
+            echo 'Sensitive identity marker found.' >&2
+            exit 1
+          fi
+
+          if git grep -nIE '/Users/[^/[:space:]]+|/home/[^/[:space:]]+' -- . \
+            ':(exclude).github/workflows/privacy-scan.yml'; then
+            echo 'Absolute home path found.' >&2
+            exit 1
+          fi
+
+          if git grep -nIE '[[:alnum:]._%+-]+@(gmail|outlook|hotmail|yahoo)\.[[:alpha:]]{2,}' -- . \
+            ':(exclude).github/workflows/privacy-scan.yml'; then
+            echo 'Personal email address found.' >&2
+            exit 1
+          fi

@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Date Mapping</title>
+    <meta
+      name="description"
+      content="Convert month-and-day values to compact, reversible three-digit codes."
+    />
+    <title>Date Code Mapper</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.cdnfonts.com/css/cascadia-code"
@@ -12,63 +16,77 @@
   </head>
   <body>
     <div class="container">
-      <h1>Date Mapping</h1>
+      <h1>Date Code Mapper</h1>
       <div id="formula" class="formula">
-        mapped = ((<span class="highlight" id="a">a</span> * sequence +
+        code = ((<span class="highlight" id="a">a</span> × dayOfYear +
         <span class="highlight" id="b">b</span>) %
         <span class="highlight" id="m">m</span>) +
         <span class="highlight" id="offset">offset</span>
       </div>
       <p>
-        Enter a date and click the button to map it to a three-digit number:
+        Enter a month and day to generate a reversible three-digit code:
       </p>
       <input
         type="text"
         id="inputDate"
         placeholder="Enter date (MMDD format)"
+        inputmode="numeric"
+        maxlength="4"
+        aria-label="Date in MMDD format"
         autocomplete="off"
       />
-      <button class="big-button" onclick="mapDate()">Map Date</button>
+      <button class="big-button" id="mapButton" type="button">
+        Generate Code
+      </button>
 
-      <p>Enter a mapped number to inverse map it to a date:</p>
+      <p>Enter a generated code to recover its month and day:</p>
       <input
         type="text"
         id="inputMapped"
-        placeholder="Enter mapped number"
+        placeholder="Enter three-digit code"
+        inputmode="numeric"
+        maxlength="3"
+        aria-label="Three-digit date code"
         autocomplete="off"
       />
-      <button class="big-button" onclick="inverseMapDate()">
-        Inverse Map Date
+      <button class="big-button" id="recoverButton" type="button">
+        Recover Date
       </button>
 
       <div id="mappedDates" class="placeholder">
         Results will be displayed here
       </div>
       <div class="info-container">
-        <svg
+        <button
+          class="icon-button"
           id="toggleHistory"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          onclick="toggleHistory()"
+          type="button"
+          aria-label="Toggle history"
         >
-          <path
-            d="M12 8V12L15 15"
-            stroke="#000000"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-            stroke="#000000"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 8V12L15 15"
+              stroke="#000000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+              stroke="#000000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
         <div style="position: relative; display: inline-block">
           <svg
             id="infoButton"
@@ -90,9 +108,8 @@
             <circle cx="12" cy="8" r="1" fill="#000000" />
           </svg>
           <span class="tooltip">
-            This tool is used to provide a numeric string to avoid name
-            collisions while preserving the time information of your naming,
-            without being too obvious to others.
+            Turn a month-and-day value into a compact numeric code for filenames
+            while retaining a reversible date mapping.
           </span>
         </div>
       </div>

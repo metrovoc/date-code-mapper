@@ -1,117 +1,100 @@
-const a = 37;
-const b = 123;
-const m = 366;
-const offset = 100;
+const MULTIPLIER = 37;
+const INCREMENT = 123;
+const MODULUS = 366;
+const OFFSET = 100;
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("a").setAttribute("data-value", a);
-  document.getElementById("b").setAttribute("data-value", b);
-  document.getElementById("m").setAttribute("data-value", m);
-  document.getElementById("offset").setAttribute("data-value", offset);
+  document.getElementById("a").setAttribute("data-value", MULTIPLIER);
+  document.getElementById("b").setAttribute("data-value", INCREMENT);
+  document.getElementById("m").setAttribute("data-value", MODULUS);
+  document.getElementById("offset").setAttribute("data-value", OFFSET);
 
-  // 设置默认值为今日日期
   const today = new Date();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
   const formattedDate = `${month}${day}`;
   document.getElementById("inputDate").value = formattedDate;
-  document.getElementById("inputMapped").value = dateMapping([
-    parseInt(formattedDate),
-  ])[0];
+  document.getElementById("inputMapped").value = mapDates([formattedDate])[0];
+
+  document.getElementById("mapButton").addEventListener("click", mapDate);
+  document
+    .getElementById("recoverButton")
+    .addEventListener("click", recoverDate);
+  document
+    .getElementById("toggleHistory")
+    .addEventListener("click", toggleHistory);
 
   loadHistory();
 });
 
-function dateToSequence(date) {
-  try {
-    let dateStr = String(date).padStart(4, "0"); // 确保日期是 4 位数
-    let month = parseInt(dateStr.slice(0, 2));
-    let day = parseInt(dateStr.slice(2, 4));
-    if (month < 1 || month > 12 || day < 1 || day > 31) {
-      throw new Error("Invalid date");
+function dateToDayOfYear(date) {
+  const dateString = String(date).trim();
+  if (!/^\d{4}$/.test(dateString)) {
+    return null;
+  }
+
+  const month = Number(dateString.slice(0, 2));
+  const day = Number(dateString.slice(2, 4));
+  const targetDate = new Date(Date.UTC(2020, month - 1, day));
+
+  if (
+    targetDate.getUTCMonth() !== month - 1 ||
+    targetDate.getUTCDate() !== day
+  ) {
+    return null;
+  }
+
+  const baseDate = Date.UTC(2020, 0, 1);
+  return Math.floor((targetDate.getTime() - baseDate) / 86_400_000) + 1;
+}
+
+function dayOfYearToDate(dayOfYear) {
+  const normalizedDay = dayOfYear === 0 ? MODULUS : dayOfYear;
+  const targetDate = new Date(
+    Date.UTC(2020, 0, 1) + (normalizedDay - 1) * 86_400_000
+  );
+  const month = String(targetDate.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(targetDate.getUTCDate()).padStart(2, "0");
+  return `${month}${day}`;
+}
+
+function extendedGcd(left, right) {
+  if (right === 0) {
+    return [left, 1, 0];
+  }
+
+  const [gcd, x, y] = extendedGcd(right, left % right);
+  return [gcd, y, x - Math.floor(left / right) * y];
+}
+
+function modularInverse(value, modulus) {
+  const [gcd, coefficient] = extendedGcd(value, modulus);
+  return gcd === 1 ? ((coefficient % modulus) + modulus) % modulus : null;
+}
+
+function mapDates(dates) {
+  return dates.flatMap((date) => {
+    const dayOfYear = dateToDayOfYear(date);
+    if (dayOfYear === null) {
+      return [];
     }
-    let baseDate = new Date(2020, 0, 1); // 使用闰年
-    let targetDate = new Date(2020, month - 1, day);
-    let sequence =
-      Math.floor((targetDate - baseDate) / (1000 * 60 * 60 * 24)) + 1;
-    return sequence;
-  } catch (e) {
-    console.error("非法日期: " + date);
-    alert("Invalid date: " + date);
-    return undefined;
-  }
+
+    return [((MULTIPLIER * dayOfYear + INCREMENT) % MODULUS) + OFFSET];
+  });
 }
 
-function sequenceToDate(sequence) {
-  try {
-    let baseDate = new Date(2020, 0, 1);
-    let targetDate = new Date(
-      baseDate.getTime() + (sequence - 1) * 24 * 60 * 60 * 1000
-    );
-    let month = targetDate.getMonth() + 1;
-    let day = targetDate.getDate();
-    if (month < 1 || month > 12 || day < 1 || day > 31) {
-      throw new Error("Invalid sequence");
+function recoverDates(codes) {
+  const inverse = modularInverse(MULTIPLIER, MODULUS);
+  return codes.flatMap((code) => {
+    if (!Number.isInteger(code) || code < OFFSET || code >= OFFSET + MODULUS) {
+      return [];
     }
-    return String(month).padStart(2, "0") + String(day).padStart(2, "0");
-  } catch (e) {
-    console.error("非法序列: " + sequence);
-    alert("Invalid sequence: " + sequence);
-    return undefined;
-  }
-}
 
-function extendedGCD(a, b) {
-  if (b === 0) {
-    return [a, 1, 0];
-  } else {
-    let [g, x, y] = extendedGCD(b, a % b);
-    return [g, y, x - Math.floor(a / b) * y];
-  }
+    const remainder = code - OFFSET - INCREMENT;
+    const dayOfYear = (inverse * ((remainder % MODULUS) + MODULUS)) % MODULUS;
+    return [dayOfYearToDate(dayOfYear)];
+  });
 }
-
-function modularInverse(a, m) {
-  let [g, x, y] = extendedGCD(a, m);
-  if (g !== 1) {
-    return null; // 逆元不存在
-  } else {
-    return ((x % m) + m) % m; // 确保结果为正数
-  }
-}
-
-function dateMapping(dates) {
-  let results = [];
-  for (let date of dates) {
-    let sequence = dateToSequence(date); // 转换为序列号
-    if (sequence === undefined) continue; // 跳过非法日期
-    let mapped = ((a * sequence + b) % m) + offset;
-    results.push(mapped);
-  }
-  return results;
-}
-
-function inverseMapping(mappedList) {
-  let aInv = modularInverse(a, m);
-  if (aInv === null) {
-    console.error("逆元不存在");
-    return [];
-  }
-  let results = [];
-  for (let y of mappedList) {
-    let temp = y - offset - b;
-    let sequence = (aInv * ((temp % m) + m)) % m; // 处理负数取模
-    let date = sequenceToDate(sequence);
-    if (date === undefined) continue; // 跳过非法序列
-    results.push(date);
-  }
-  return results;
-}
-
-// 示例
-let dates = [101, 1230]; // 输入日期集合（格式 MMDD）
-let mapped = dateMapping(dates); // 映射到三位数集合
-let reversedDates = inverseMapping(mapped); // 映射回日期
-console.log(mapped, reversedDates);
 
 function mapDate() {
   const inputDate = document.getElementById("inputDate").value;
@@ -119,37 +102,33 @@ function mapDate() {
     alert("Please enter a valid date!");
     return;
   }
-  const mapped = dateMapping([parseInt(inputDate)]);
+  const mapped = mapDates([inputDate]);
   if (mapped.length === 0) {
     alert("Mapping failed. Please enter a valid date.");
     return;
   }
   const mappedDatesDiv = document.getElementById("mappedDates");
   mappedDatesDiv.classList.remove("placeholder");
-  mappedDatesDiv.innerHTML = `
-          <p>Mapped result: ${mapped.join(", ")}</p>
-      `;
-  document.getElementById("inputMapped").value = ""; // 清空另一个输入框
+  mappedDatesDiv.textContent = `Generated code: ${mapped.join(", ")}`;
+  document.getElementById("inputMapped").value = "";
   addToHistory("map", inputDate, mapped.join(", "));
 }
 
-function inverseMapDate() {
+function recoverDate() {
   const inputMapped = document.getElementById("inputMapped").value;
   if (!inputMapped) {
     alert("Please enter a valid mapped number!");
     return;
   }
-  const reversedDates = inverseMapping([parseInt(inputMapped)]);
+  const reversedDates = recoverDates([Number(inputMapped)]);
   if (reversedDates.length === 0) {
     alert("Inverse mapping failed. Please enter a valid mapped number.");
     return;
   }
   const mappedDatesDiv = document.getElementById("mappedDates");
   mappedDatesDiv.classList.remove("placeholder");
-  mappedDatesDiv.innerHTML = `
-          <p>Reversed mapping: ${reversedDates.join(", ")}</p>
-      `;
-  document.getElementById("inputDate").value = ""; // 清空另一个输入框
+  mappedDatesDiv.textContent = `Recovered date: ${reversedDates.join(", ")}`;
+  document.getElementById("inputDate").value = "";
   addToHistory("inverse", inputMapped, reversedDates.join(", "));
 }
 
@@ -166,40 +145,33 @@ function addToHistory(type, input, result) {
   const historyDiv = document.getElementById("history");
   const entry = document.createElement("div");
   entry.className = "history-entry";
-  entry.innerHTML = `
-    <span>${type}: ${input} ➔ ${result}</span>
-    <button class="svg-btn" onclick="deleteHistory(event, this)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 6H5H21" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-  `;
-  entry.onclick = function (event) {
-    if (
-      event.target.className !== "svg-btn" &&
-      event.target.tagName !== "svg" &&
-      event.target.tagName !== "path"
-    ) {
-      if (type === "map") {
-        document.getElementById("inputDate").value = input;
-        document.getElementById("inputMapped").value = "";
-        mapDate();
-      } else {
-        document.getElementById("inputMapped").value = input;
-        document.getElementById("inputDate").value = "";
-        inverseMapDate();
-      }
-    }
-  };
-  historyDiv.appendChild(entry);
-  saveHistory();
-}
+  const label = document.createElement("span");
+  label.textContent = `${type}: ${input} ➔ ${result}`;
 
-function deleteHistory(event, button) {
-  event.stopPropagation();
-  const entry = button.parentElement;
-  entry.remove();
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "svg-btn";
+  deleteButton.type = "button";
+  deleteButton.setAttribute("aria-label", "Delete history entry");
+  deleteButton.textContent = "×";
+  deleteButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    entry.remove();
+    saveHistory();
+  });
+
+  entry.append(label, deleteButton);
+  entry.addEventListener("click", () => {
+    if (type === "map") {
+      document.getElementById("inputDate").value = input;
+      document.getElementById("inputMapped").value = "";
+      mapDate();
+    } else {
+      document.getElementById("inputMapped").value = input;
+      document.getElementById("inputDate").value = "";
+      recoverDate();
+    }
+  });
+  historyDiv.appendChild(entry);
   saveHistory();
 }
 
